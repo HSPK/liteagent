@@ -84,7 +84,7 @@ export function InkRuntimeApp({ controller }: { controller: RuntimeControllerLik
 
   const columns = stdout.columns ?? 80;
   const rows = stdout.rows ?? 24;
-  const headerHeight = 2;
+  const headerHeight = 1; // single status line
   const suggestionHeight = 3;
   const composerHeight = 3;
   const historyHeight = Math.max(1, rows - headerHeight - suggestionHeight - composerHeight);
@@ -164,8 +164,12 @@ export function InkRuntimeApp({ controller }: { controller: RuntimeControllerLik
       return;
     }
 
-    if (key.backspace) { commandInput.backspace(); return; }
-    if (key.delete)    { commandInput.deleteFwd(); return; }
+    if (key.backspace || key.delete) {
+      // In Ink 6.x, \x7f (physical Backspace key) maps to key.delete.
+      // key.backspace is only \x08 (Ctrl+H). We treat both as backward delete.
+      commandInput.backspace();
+      return;
+    }
     if (key.tab)       { commandInput.complete(); return; }
 
     if (key.upArrow && !busy) {
@@ -329,7 +333,7 @@ export function InkRuntimeApp({ controller }: { controller: RuntimeControllerLik
 
   return h(
     Box,
-    { flexDirection: 'column' },
+    { flexDirection: 'column', height: rows },
     h(Text, { color: 'cyan', dimColor: true }, headerLine),
     h(
       Box,
