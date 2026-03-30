@@ -43,16 +43,11 @@ interface InkKeyLike {
 
 function kindColor(kind: string): string {
   switch (kind) {
-    case 'user':
-      return 'cyanBright';
-    case 'agent':
-      return 'greenBright';
-    case 'error':
-      return 'redBright';
-    case 'command':
-      return 'yellow';
-    default:
-      return 'gray';
+    case 'user':    return 'cyan';
+    case 'agent':   return 'green';
+    case 'error':   return 'red';
+    case 'command': return 'yellow';
+    default:        return 'white';
   }
 }
 
@@ -313,7 +308,7 @@ export function InkRuntimeApp({ controller }: { controller: RuntimeControllerLik
 
   const { buffer, cursorIndex } = commandInput;
   const isSlashMode = buffer.startsWith('/');
-  const promptColor = isSlashMode ? 'yellow' : busy ? 'magenta' : 'cyanBright';
+  const promptColor = isSlashMode ? 'yellow' : busy ? 'magenta' : 'cyan';
   const cursorCharacter = busy ? '·' : '█';
   const inputFrame = buildInputFrame({
     columns,
@@ -335,8 +330,7 @@ export function InkRuntimeApp({ controller }: { controller: RuntimeControllerLik
   return h(
     Box,
     { flexDirection: 'column' },
-    h(Text, { color: 'cyanBright', bold: true }, 'agents'),
-    h(Text, { color: 'gray' }, headerLine),
+    h(Text, { color: 'cyan', dimColor: true }, headerLine),
     h(
       Box,
       { flexDirection: 'column', flexGrow: 1 },
@@ -352,7 +346,7 @@ export function InkRuntimeApp({ controller }: { controller: RuntimeControllerLik
       h(Text, {
         key: `panel-${index}-${line}`,
         color: isSlashMode && line ? 'yellow' : 'gray',
-        dimColor: !line || !isSlashMode,
+        dimColor: !isSlashMode,
       }, line),
     ),
     h(Text, { color: 'gray' }, inputFrame.top),
