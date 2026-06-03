@@ -1,6 +1,7 @@
 import { assistantAppDefinition } from './domain/assistant-app.js';
 import { echoAppDefinition } from './domain/echo-app.js';
 import { appManagerAppDefinition } from './system/app-manager-app.js';
+import { orchestratorAppDefinition } from './system/orchestrator-app.js';
 import { plannerAppDefinition } from './system/planner-app.js';
 import { routerAppDefinition } from './system/router-app.js';
 import { todoAppDefinition } from './system/todo-app.js';
@@ -11,6 +12,7 @@ export const builtinAppDefinitions = [
   assistantAppDefinition,
   echoAppDefinition,
   appManagerAppDefinition,
+  orchestratorAppDefinition,
   plannerAppDefinition,
   routerAppDefinition,
   todoAppDefinition,

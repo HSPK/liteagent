@@ -4,6 +4,7 @@ export { builtinAppDefinitions, registerBuiltinApps } from './apps/builtin.js';
 export { assistantAppDefinition } from './apps/domain/assistant-app.js';
 export { echoAppDefinition } from './apps/domain/echo-app.js';
 export { appManagerAppDefinition } from './apps/system/app-manager-app.js';
+export { orchestratorAppDefinition, ORCHESTRATOR_APP_ID } from './apps/system/orchestrator-app.js';
 export { plannerAppDefinition } from './apps/system/planner-app.js';
 export { routerAppDefinition } from './apps/system/router-app.js';
 export { todoAppDefinition } from './apps/system/todo-app.js';
@@ -25,6 +26,9 @@ export {
 export { OpenAICompatibleModelProvider, buildOpenAICompatibleRequestBody, createOpenAICompatibleProvider } from './models/openai-compatible-provider.js';
 export { ModelProviderRegistry } from './models/provider-registry.js';
 export { createRuntime } from './sdk/create-runtime.js';
+export { loadLiteAgents, parseOrchestration } from './liteagents/index.js';
+export { LiteAgentsStore } from './liteagents/store.js';
+export { parseMarkdown, stringifyMarkdown } from './liteagents/markdown.js';
 export { DispatchHandle } from './sdk/dispatch-handle.js';
 export { InMemoryObservabilityBackend } from './kernel/observability/in-memory-observability-backend.js';
 export { JsonlFileObservabilityBackend } from './kernel/observability/jsonl-file-observability-backend.js';

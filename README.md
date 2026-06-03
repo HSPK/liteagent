@@ -39,6 +39,75 @@ The current MVP is a structured Node.js implementation focused on getting the ru
 - `src/apps`: app host, app registry, and built-in system/domain apps, including `domain.assistant`, `domain.echo`, `domain.workflow`, `system.app-manager`, `system.todo`, `system.planner`, and a deterministic `system.router`.
 - `test`: framework-level tests for the main execution paths.
 
+## NLO orchestration (`.liteagents/`)
+
+The runtime can boot a project from a `.liteagents/` directory that holds the
+static, human-readable NLO description of each agent. This is the first slice of
+the natural-language-orchestration model: behavior is described in Markdown
+files rather than hand-written app code.
+
+```text
+.liteagents/
+  agents/
+    <name>/
+      nlo.md      # high-level guidance (body) + orchestration plan (JSON frontmatter)
+      system.md   # lowest-level, most stable rules
+      memory.md   # long-term, human-readable memory
+  sessions/       # runtime session state (JSON)
+```
+
+`nlo.md` carries an optional JSON frontmatter block that declares the
+orchestration plan. For example, the `main` agent spawns a `review` agent and a
+`tool-call-check` agent on startup, and asks the runtime for a heartbeat alarm
+every 10 seconds:
+
+```md
+---
+{
+  "spawn": [
+    { "name": "review", "role": "review" },
+    { "name": "tool-call-check", "role": "tool-call-check" }
+  ],
+  "heartbeat": { "intervalMs": 10000 }
+}
+---
+
+# Main agent
+
+High-level natural-language guidance goes in the body.
+```
+
+Boot it with `loadLiteAgents()`:
+
+```js
+import { AgentsRuntime, registerBuiltinApps, loadLiteAgents } from 'agents';
+
+const runtime = registerBuiltinApps(new AgentsRuntime());
+const handle = await loadLiteAgents(runtime);
+
+console.log(handle.agentNames); // ['main', 'review', 'tool-call-check']
+console.log(handle.spawned);    // { main: ['review', 'tool-call-check'] }
+
+// Heartbeats are delivered to the orchestrator app every 10s; you can also
+// deliver one manually (useful in tests):
+handle.triggerHeartbeat('main');
+await runtime.whenIdle();
+
+handle.stop(); // stop heartbeat timers
+```
+
+The loader:
+
+- creates each agent found under `.liteagents/agents/`, installing the
+  `system.orchestrator` app so they can receive runtime-driven signals
+- processes each `nlo.md` `spawn` directive, scaffolding a child agent's static
+  description on disk when it does not exist yet
+- wires each `heartbeat` directive to a recurring runtime-delivered `heartbeat`
+  alarm, recorded in the agent's memory by the orchestrator app
+
+If no agents exist on disk, `loadLiteAgents()` scaffolds a default `main` agent
+that demonstrates this exact orchestration.
+
 ## SDK quick start
 
 The library now has a higher-level SDK entrypoint for the common path:
