@@ -50,7 +50,7 @@ export function parseMarkdown(source: string): ParsedMarkdown {
   try {
     const parsed = JSON.parse(rawFrontmatter);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      throw new Error('Frontmatter must be a JSON object.');
+      throw new Error(`Frontmatter must be a JSON object, got ${Array.isArray(parsed) ? 'array' : typeof parsed}.`);
     }
     frontmatter = parsed as ProtocolRecord;
   } catch (error) {

@@ -49,7 +49,7 @@ async function readFileOrEmpty(path: string): Promise<string> {
 
 async function writeFileAtomic(path: string, content: string): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
-  const tempPath = `${path}.tmp-${process.pid}-${Date.now()}`;
+  const tempPath = `${path}.tmp-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   await writeFile(tempPath, content, 'utf8');
   await rename(tempPath, path);
 }
